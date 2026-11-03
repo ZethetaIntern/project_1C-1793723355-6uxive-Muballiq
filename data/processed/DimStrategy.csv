@@ -1,0 +1,8 @@
+StrategyName,StrategyID
+Composite,1
+MACD_Trend,2
+MA_Cross,3
+ML_RF,4
+ML_XGB,5
+RL_PPO,6
+RSI_Reversal,7

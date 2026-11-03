@@ -1,0 +1,22 @@
+{
+  "holdout_accuracy": 0.4659090909090909,
+  "train_rows": 352,
+  "test_rows": 88,
+  "features": [
+    "Return_1",
+    "Return_5",
+    "Return_10",
+    "Return_20",
+    "Return_60",
+    "RSI_14",
+    "MACD_Hist",
+    "BB_pctB",
+    "BB_BW",
+    "ATR_14",
+    "Volatility_20",
+    "Volume_Ratio",
+    "Is_London",
+    "Is_NY",
+    "Is_Overlap"
+  ]
+}

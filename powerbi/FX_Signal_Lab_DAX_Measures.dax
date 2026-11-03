@@ -1,0 +1,524 @@
+// Core KPI
+Total Signals = COUNTROWS(FactSignals)
+
+// Core KPI
+Buy Signals = CALCULATE([Total Signals], FactSignals[Final_Signal] IN {"BUY","STRONG_BUY"})
+
+// Core KPI
+Sell Signals = CALCULATE([Total Signals], FactSignals[Final_Signal] IN {"SELL","STRONG_SELL"})
+
+// Core KPI
+Hold Signals = CALCULATE([Total Signals], FactSignals[Final_Signal] = "HOLD")
+
+// Core KPI
+Strong Buy Signals = CALCULATE([Total Signals], FactSignals[Final_Signal] = "STRONG_BUY")
+
+// Core KPI
+Strong Sell Signals = CALCULATE([Total Signals], FactSignals[Final_Signal] = "STRONG_SELL")
+
+// Core KPI
+Average Confidence = AVERAGE(FactSignals[Confidence])
+
+// Core KPI
+Average TA Score = AVERAGE(FactSignals[TA_Score])
+
+// Core KPI
+Average ML Up Probability = AVERAGE(FactSignals[ML_Prob_Up])
+
+// Core KPI
+Latest Close = VAR T = TOPN(1, FactSignals, FactSignals[DateTime], DESC) RETURN MAXX(T, FactSignals[Close])
+
+// Core KPI
+Latest Signal Confidence = VAR T = TOPN(1, FactSignals, FactSignals[DateTime], DESC) RETURN MAXX(T, FactSignals[Confidence])
+
+// Core KPI
+Signal Buy Share = DIVIDE([Buy Signals],[Total Signals],0)
+
+// Core KPI
+Signal Sell Share = DIVIDE([Sell Signals],[Total Signals],0)
+
+// Core KPI
+Signal Hold Share = DIVIDE([Hold Signals],[Total Signals],0)
+
+// Core KPI
+Strong Signal Share = DIVIDE([Strong Buy Signals]+[Strong Sell Signals],[Total Signals],0)
+
+// Core KPI
+Executed Trades = COUNTROWS(FactTrades)
+
+// Core KPI
+Winning Trades = CALCULATE(COUNTROWS(FactTrades),FactTrades[PnL]>0)
+
+// Core KPI
+Losing Trades = CALCULATE(COUNTROWS(FactTrades),FactTrades[PnL]<0)
+
+// Core KPI
+Win Rate = DIVIDE([Winning Trades],[Executed Trades],0)
+
+// Core KPI
+Total Trade PnL = SUM(FactTrades[PnL])
+
+// Core KPI
+Average Trade PnL = AVERAGE(FactTrades[PnL])
+
+// Core KPI
+Gross Profit = CALCULATE(SUM(FactTrades[PnL]),FactTrades[PnL]>0)
+
+// Core KPI
+Gross Loss = CALCULATE(SUM(FactTrades[PnL]),FactTrades[PnL]<0)
+
+// Core KPI
+Profit Factor = DIVIDE([Gross Profit],ABS([Gross Loss]),0)
+
+// Core KPI
+Average Holding Days = AVERAGE(FactTrades[HoldingDays])
+
+// Core KPI
+Total Commission = SUM(FactTrades[Commission])
+
+// Core KPI
+Net PnL After Commission = [Total Trade PnL]-[Total Commission]
+
+// Core KPI
+Average Position Size = AVERAGE(FactTrades[PositionSize])
+
+// Core KPI
+Trade Count = COUNT(FactTrades[TradeID])
+
+// Core KPI
+Open Trade Count = CALCULATE(COUNTROWS(FactTrades),FactTrades[IsOpen]=TRUE())
+
+// Core KPI
+Closed Trade Count = CALCULATE(COUNTROWS(FactTrades),FactTrades[IsOpen]=FALSE())
+
+// Core KPI
+Monte Carlo Scenarios = COUNTROWS(FactMonteCarlo)
+
+// Core KPI
+Monte Carlo Mean PnL = AVERAGE(FactMonteCarlo[PortfolioPnL])
+
+// Core KPI
+Monte Carlo Worst PnL = MIN(FactMonteCarlo[PortfolioPnL])
+
+// Core KPI
+Monte Carlo Best PnL = MAX(FactMonteCarlo[PortfolioPnL])
+
+// Core KPI
+Monte Carlo Median PnL = MEDIAN(FactMonteCarlo[PortfolioPnL])
+
+// Core KPI
+Monte Carlo VaR 95 Loss = VAR P05 = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.05) RETURN -P05
+
+// Core KPI
+Monte Carlo CVaR 95 Loss = VAR P05 = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.05) RETURN -AVERAGEX(FILTER(FactMonteCarlo,FactMonteCarlo[PortfolioPnL]<=P05),FactMonteCarlo[PortfolioPnL])
+
+// Core KPI
+Average Spread = AVERAGE(FactMarketData[Spread])
+
+// Core KPI
+Average ATR = AVERAGE(FactMarketData[ATR_14])
+
+// Core KPI
+Average RSI = AVERAGE(FactMarketData[RSI_14])
+
+// Core KPI
+Average Volatility = AVERAGE(FactMarketData[Volatility_20])
+
+// Core KPI
+Average Volume = AVERAGE(FactMarketData[Volume])
+
+// Core KPI
+Total Volume = SUM(FactMarketData[Volume])
+
+// Core KPI
+Max Close = MAX(FactMarketData[Close])
+
+// Core KPI
+Min Close = MIN(FactMarketData[Close])
+
+// Core KPI
+Price Range = [Max Close]-[Min Close]
+
+// Core KPI
+Backtest PnL = SUM(Backtest[BacktestPnL])
+
+// Core KPI
+Backtest Ending Equity = MAX(Backtest[EquityCurve])
+
+// Core KPI
+Backtest Average Return = AVERAGE(Backtest[StrategyReturn])
+
+// Core KPI
+Backtest Positive Bars = CALCULATE(COUNTROWS(Backtest),Backtest[StrategyReturn]>0)
+
+// Core KPI
+Backtest Negative Bars = CALCULATE(COUNTROWS(Backtest),Backtest[StrategyReturn]<0)
+
+// Core KPI
+Backtest Hit Ratio = DIVIDE([Backtest Positive Bars],[Backtest Positive Bars]+[Backtest Negative Bars],0)
+
+// Pair breakdown
+EURUSD Signals = CALCULATE([Total Signals],DimCurrencyPair[PairName] = "EUR/USD")
+
+// Pair breakdown
+EURUSD Buy Signals = CALCULATE([Buy Signals],DimCurrencyPair[PairName] = "EUR/USD")
+
+// Pair breakdown
+EURUSD Sell Signals = CALCULATE([Sell Signals],DimCurrencyPair[PairName] = "EUR/USD")
+
+// Pair breakdown
+EURUSD Trade PnL = CALCULATE([Total Trade PnL],DimCurrencyPair[PairName] = "EUR/USD")
+
+// Pair breakdown
+GBPUSD Signals = CALCULATE([Total Signals],DimCurrencyPair[PairName] = "GBP/USD")
+
+// Pair breakdown
+GBPUSD Buy Signals = CALCULATE([Buy Signals],DimCurrencyPair[PairName] = "GBP/USD")
+
+// Pair breakdown
+GBPUSD Sell Signals = CALCULATE([Sell Signals],DimCurrencyPair[PairName] = "GBP/USD")
+
+// Pair breakdown
+GBPUSD Trade PnL = CALCULATE([Total Trade PnL],DimCurrencyPair[PairName] = "GBP/USD")
+
+// Pair breakdown
+USDJPY Signals = CALCULATE([Total Signals],DimCurrencyPair[PairName] = "USD/JPY")
+
+// Pair breakdown
+USDJPY Buy Signals = CALCULATE([Buy Signals],DimCurrencyPair[PairName] = "USD/JPY")
+
+// Pair breakdown
+USDJPY Sell Signals = CALCULATE([Sell Signals],DimCurrencyPair[PairName] = "USD/JPY")
+
+// Pair breakdown
+USDJPY Trade PnL = CALCULATE([Total Trade PnL],DimCurrencyPair[PairName] = "USD/JPY")
+
+// Pair breakdown
+USDINR Signals = CALCULATE([Total Signals],DimCurrencyPair[PairName] = "USD/INR")
+
+// Pair breakdown
+USDINR Buy Signals = CALCULATE([Buy Signals],DimCurrencyPair[PairName] = "USD/INR")
+
+// Pair breakdown
+USDINR Sell Signals = CALCULATE([Sell Signals],DimCurrencyPair[PairName] = "USD/INR")
+
+// Pair breakdown
+USDINR Trade PnL = CALCULATE([Total Trade PnL],DimCurrencyPair[PairName] = "USD/INR")
+
+// Pair breakdown
+AUDUSD Signals = CALCULATE([Total Signals],DimCurrencyPair[PairName] = "AUD/USD")
+
+// Pair breakdown
+AUDUSD Buy Signals = CALCULATE([Buy Signals],DimCurrencyPair[PairName] = "AUD/USD")
+
+// Pair breakdown
+AUDUSD Sell Signals = CALCULATE([Sell Signals],DimCurrencyPair[PairName] = "AUD/USD")
+
+// Pair breakdown
+AUDUSD Trade PnL = CALCULATE([Total Trade PnL],DimCurrencyPair[PairName] = "AUD/USD")
+
+// Time intelligence
+Signals YTD = TOTALYTD([Total Signals],DimDate[Date])
+
+// Time intelligence
+Signals MTD = TOTALMTD([Total Signals],DimDate[Date])
+
+// Time intelligence
+Signals QTD = TOTALQTD([Total Signals],DimDate[Date])
+
+// Time intelligence
+Trade PnL YTD = TOTALYTD([Total Trade PnL],DimDate[Date])
+
+// Time intelligence
+Trade PnL MTD = TOTALMTD([Total Trade PnL],DimDate[Date])
+
+// Time intelligence
+Signals Previous Month = CALCULATE([Total Signals],DATEADD(DimDate[Date],-1,MONTH))
+
+// Time intelligence
+Signals Previous Year = CALCULATE([Total Signals],DATEADD(DimDate[Date],-1,YEAR))
+
+// Time intelligence
+Signals MoM Change = [Total Signals]-[Signals Previous Month]
+
+// Time intelligence
+Signals MoM Growth = DIVIDE([Signals MoM Change],[Signals Previous Month],0)
+
+// Time intelligence
+PnL Previous Month = CALCULATE([Total Trade PnL],DATEADD(DimDate[Date],-1,MONTH))
+
+// Time intelligence
+PnL MoM Change = [Total Trade PnL]-[PnL Previous Month]
+
+// Time intelligence
+PnL MoM Growth = DIVIDE([PnL MoM Change],[PnL Previous Month],0)
+
+// Time intelligence
+Signals Rolling 7D = CALCULATE([Total Signals],DATESINPERIOD(DimDate[Date],MAX(DimDate[Date]),-7,DAY))
+
+// Time intelligence
+Signals Rolling 30D = CALCULATE([Total Signals],DATESINPERIOD(DimDate[Date],MAX(DimDate[Date]),-30,DAY))
+
+// Time intelligence
+PnL Rolling 7D = CALCULATE([Total Trade PnL],DATESINPERIOD(DimDate[Date],MAX(DimDate[Date]),-7,DAY))
+
+// Time intelligence
+PnL Rolling 30D = CALCULATE([Total Trade PnL],DATESINPERIOD(DimDate[Date],MAX(DimDate[Date]),-30,DAY))
+
+// Time intelligence
+Average Daily Signals = AVERAGEX(VALUES(DimDate[Date]),[Total Signals])
+
+// Time intelligence
+Average Daily PnL = AVERAGEX(VALUES(DimDate[Date]),[Total Trade PnL])
+
+// Time intelligence
+Trading Days = DISTINCTCOUNT(DimDate[Date])
+
+// Time intelligence
+Signals Per Trading Day = DIVIDE([Total Signals],[Trading Days],0)
+
+// Time intelligence
+Cumulative Trade PnL = CALCULATE([Total Trade PnL],FILTER(ALLSELECTED(DimDate[Date]),DimDate[Date]<=MAX(DimDate[Date])))
+
+// Time intelligence
+Cumulative Signals = CALCULATE([Total Signals],FILTER(ALLSELECTED(DimDate[Date]),DimDate[Date]<=MAX(DimDate[Date])))
+
+// Time intelligence
+PnL Daily Average 30D = DIVIDE([PnL Rolling 30D],30,0)
+
+// Time intelligence
+Signal Daily Average 30D = DIVIDE([Signals Rolling 30D],30,0)
+
+// Time intelligence
+Last Signal Date = MAX(FactSignals[DateTime])
+
+// Risk / attribution
+Long Trades = CALCULATE(COUNTROWS(FactTrades),FactTrades[Direction]="LONG")
+
+// Risk / attribution
+Short Trades = CALCULATE(COUNTROWS(FactTrades),FactTrades[Direction]="SHORT")
+
+// Risk / attribution
+Long Trade PnL = CALCULATE([Total Trade PnL],FactTrades[Direction]="LONG")
+
+// Risk / attribution
+Short Trade PnL = CALCULATE([Total Trade PnL],FactTrades[Direction]="SHORT")
+
+// Risk / attribution
+Buy Strategy PnL = CALCULATE([Total Trade PnL],FactTrades[SignalType] IN {"BUY","STRONG_BUY"})
+
+// Risk / attribution
+Sell Strategy PnL = CALCULATE([Total Trade PnL],FactTrades[SignalType] IN {"SELL","STRONG_SELL"})
+
+// Risk / attribution
+Average Winning Trade = AVERAGEX(FILTER(FactTrades,FactTrades[PnL]>0),FactTrades[PnL])
+
+// Risk / attribution
+Average Losing Trade = AVERAGEX(FILTER(FactTrades,FactTrades[PnL]<0),FactTrades[PnL])
+
+// Risk / attribution
+Largest Winning Trade = MAXX(FILTER(FactTrades,FactTrades[PnL]>0),FactTrades[PnL])
+
+// Risk / attribution
+Largest Losing Trade = MINX(FILTER(FactTrades,FactTrades[PnL]<0),FactTrades[PnL])
+
+// Risk / attribution
+Median Trade PnL = MEDIAN(FactTrades[PnL])
+
+// Risk / attribution
+Trade PnL StdDev = STDEV.P(FactTrades[PnL])
+
+// Risk / attribution
+Trade PnL Variance = VAR.P(FactTrades[PnL])
+
+// Risk / attribution
+Trade PnL per Lot = DIVIDE([Total Trade PnL],SUM(FactTrades[PositionSize]),0)
+
+// Risk / attribution
+Pips Won = CALCULATE(SUM(FactTrades[PnL_Pips]),FactTrades[PnL_Pips]>0)
+
+// Risk / attribution
+Pips Lost = CALCULATE(SUM(FactTrades[PnL_Pips]),FactTrades[PnL_Pips]<0)
+
+// Risk / attribution
+Net Pips = SUM(FactTrades[PnL_Pips])
+
+// Risk / attribution
+Average Pips per Trade = AVERAGE(FactTrades[PnL_Pips])
+
+// Risk / attribution
+Commission per Trade = DIVIDE([Total Commission],[Executed Trades],0)
+
+// Risk / attribution
+Break Even Trades = CALCULATE(COUNTROWS(FactTrades),FactTrades[PnL]=0)
+
+// Risk / attribution
+Trade Win Loss Ratio = DIVIDE([Winning Trades],[Losing Trades],0)
+
+// Risk / attribution
+Max Signal Confidence = MAX(FactSignals[Confidence])
+
+// Risk / attribution
+Min Signal Confidence = MIN(FactSignals[Confidence])
+
+// Risk / attribution
+Signal Confidence StdDev = STDEV.P(FactSignals[Confidence])
+
+// Risk / attribution
+High Confidence Signals = CALCULATE([Total Signals],FactSignals[Confidence]>=0.8)
+
+// Risk / attribution
+Low Confidence Signals = CALCULATE([Total Signals],FactSignals[Confidence]<0.5)
+
+// Risk / attribution
+High Confidence Share = DIVIDE([High Confidence Signals],[Total Signals],0)
+
+// Risk / attribution
+ML Bullish Signals = CALCULATE([Total Signals],FactSignals[ML_Signal]="BUY")
+
+// Risk / attribution
+ML Bearish Signals = CALCULATE([Total Signals],FactSignals[ML_Signal]="SELL")
+
+// Risk / attribution
+RL Long Signals = CALCULATE([Total Signals],FactSignals[RL_Signal]="BUY")
+
+// Risk / attribution
+RL Short Signals = CALCULATE([Total Signals],FactSignals[RL_Signal]="SELL")
+
+// Risk / attribution
+TA Bullish Average = AVERAGEX(FILTER(FactSignals,FactSignals[TA_Score]>0),FactSignals[TA_Score])
+
+// Risk / attribution
+TA Bearish Average = AVERAGEX(FILTER(FactSignals,FactSignals[TA_Score]<0),FactSignals[TA_Score])
+
+// Risk / attribution
+Positive Monte Carlo Scenarios = CALCULATE(COUNTROWS(FactMonteCarlo),FactMonteCarlo[PortfolioPnL]>0)
+
+// Risk / attribution
+Negative Monte Carlo Scenarios = CALCULATE(COUNTROWS(FactMonteCarlo),FactMonteCarlo[PortfolioPnL]<0)
+
+// Risk / attribution
+Monte Carlo Positive Share = DIVIDE([Positive Monte Carlo Scenarios],[Monte Carlo Scenarios],0)
+
+// Risk / attribution
+Monte Carlo PnL StdDev = STDEV.P(FactMonteCarlo[PortfolioPnL])
+
+// Risk / attribution
+Monte Carlo PnL Variance = VAR.P(FactMonteCarlo[PortfolioPnL])
+
+// Risk / attribution
+Monte Carlo 1 Percentile = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.01)
+
+// Risk / attribution
+Monte Carlo 10 Percentile = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.10)
+
+// Risk / attribution
+Monte Carlo 90 Percentile = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.90)
+
+// Risk / attribution
+Monte Carlo 99 Percentile = PERCENTILEX.INC(FactMonteCarlo,FactMonteCarlo[PortfolioPnL],0.99)
+
+// Risk / attribution
+Max Parallel Shift = MAX(FactMonteCarlo[ParallelShift])
+
+// Risk / attribution
+Min Parallel Shift = MIN(FactMonteCarlo[ParallelShift])
+
+// Risk / attribution
+Average Vol Shock = AVERAGE(FactMonteCarlo[VolShock])
+
+// Risk / attribution
+Average Corr Shock = AVERAGE(FactMonteCarlo[CorrShock])
+
+// Risk / attribution
+EURUSD Scenario PnL = SUM(FactMonteCarlo[EURUSD_PnL])
+
+// Risk / attribution
+USDJPY Scenario PnL = SUM(FactMonteCarlo[USDJPY_PnL])
+
+// Risk / attribution
+GBPUSD Scenario PnL = SUM(FactMonteCarlo[GBPUSD_PnL])
+
+// Risk / attribution
+Backtest Max Equity = MAX(Backtest[EquityCurve])
+
+// Risk / attribution
+Backtest Min Equity = MIN(Backtest[EquityCurve])
+
+// Risk / attribution
+Backtest Max Drawdown = MINX(Backtest,DIVIDE(Backtest[EquityCurve]-CALCULATE(MAX(Backtest[EquityCurve]),FILTER(ALL(Backtest),Backtest[DateTime]<=EARLIER(Backtest[DateTime]))),CALCULATE(MAX(Backtest[EquityCurve]),FILTER(ALL(Backtest),Backtest[DateTime]<=EARLIER(Backtest[DateTime]))),0))
+
+// Risk / attribution
+Backtest Return StdDev = STDEV.P(Backtest[StrategyReturn])
+
+// Risk / attribution
+Backtest Sharpe Proxy = DIVIDE(AVERAGE(Backtest[StrategyReturn]),STDEV.P(Backtest[StrategyReturn]),0)*SQRT(24*365)
+
+// Risk / attribution
+Backtest Gross Return = SUM(Backtest[GrossReturn])
+
+// Risk / attribution
+Backtest Transaction Cost = SUM(Backtest[CostReturn])
+
+// Risk / attribution
+Backtest Net Return = SUM(Backtest[StrategyReturn])
+
+// Risk / attribution
+Backtest Bars = COUNTROWS(Backtest)
+
+// Risk / attribution
+Backtest Long Bars = CALCULATE(COUNTROWS(Backtest),Backtest[Position]=1)
+
+// Risk / attribution
+Backtest Short Bars = CALCULATE(COUNTROWS(Backtest),Backtest[Position]=-1)
+
+// Risk / attribution
+Backtest Flat Bars = CALCULATE(COUNTROWS(Backtest),Backtest[Position]=0)
+
+// Risk / attribution
+Backtest Long Share = DIVIDE([Backtest Long Bars],[Backtest Bars],0)
+
+// Risk / attribution
+Backtest Short Share = DIVIDE([Backtest Short Bars],[Backtest Bars],0)
+
+// Risk / attribution
+Backtest Flat Share = DIVIDE([Backtest Flat Bars],[Backtest Bars],0)
+
+// Risk / attribution
+Average Trade Spread = AVERAGE(FactMarketData[Spread])
+
+// Risk / attribution
+Maximum Trade Spread = MAX(FactMarketData[Spread])
+
+// Risk / attribution
+Minimum Trade Spread = MIN(FactMarketData[Spread])
+
+// Risk / attribution
+Maximum ATR = MAX(FactMarketData[ATR_14])
+
+// Risk / attribution
+Minimum ATR = MIN(FactMarketData[ATR_14])
+
+// Risk / attribution
+Maximum RSI = MAX(FactMarketData[RSI_14])
+
+// Risk / attribution
+Minimum RSI = MIN(FactMarketData[RSI_14])
+
+// Risk / attribution
+London Session Signals = CALCULATE([Total Signals],FactSignals[Is_London]=1)
+
+// Risk / attribution
+New York Session Signals = CALCULATE([Total Signals],FactSignals[Is_NY]=1)
+
+// Risk / attribution
+London NY Overlap Signals = CALCULATE([Total Signals],FactSignals[Is_Overlap]=1)
+
+// Risk / attribution
+London Session Share = DIVIDE([London Session Signals],[Total Signals],0)
+
+// Risk / attribution
+New York Session Share = DIVIDE([New York Session Signals],[Total Signals],0)
+
+// Risk / attribution
+Overlap Session Share = DIVIDE([London NY Overlap Signals],[Total Signals],0)

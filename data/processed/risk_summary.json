@@ -1,0 +1,9 @@
+{
+  "scenario_count": 1000,
+  "mean_pnl": 4871.33722,
+  "median_pnl": 1472.13,
+  "var_95_loss": 165865.703,
+  "cvar_95_loss": 198183.87039999999,
+  "worst_pnl": -269801.36,
+  "best_pnl": 375103.83
+}
